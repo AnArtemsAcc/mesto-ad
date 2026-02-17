@@ -18,7 +18,7 @@ const hideInputError = (settings, formInput, formElement) => {
 
 const checkInputValidity = (settings, formInput, formElement) => {
   if (formInput.validity.patternMismatch) {
-    formInput.setCustomValidity(formInput.data-error-message);
+    formInput.setCustomValidity(formInput.dataset.errorMessage);
   } else {
     formInput.setCustomValidity("");
   }

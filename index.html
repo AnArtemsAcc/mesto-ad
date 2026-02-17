@@ -52,6 +52,10 @@
                 class="popup__input popup__input_type_name"
                 placeholder="Имя"
                 data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+                minlength="2"
+                maxlength="40"
+                pattern="^[a-z A-Z а-я А-Я \- \s]+$"
+                required
               />
               <span class="popup__error" id="user-name-error"></span>
             </label>
@@ -61,6 +65,9 @@
                 id="user-description"
                 class="popup__input popup__input_type_description"
                 placeholder="Занятие"
+                minlength="2"
+                maxlength="200"
+                required
               />
               <span class="popup__error" id="user-description-error">Aboba</span>
             </label>
