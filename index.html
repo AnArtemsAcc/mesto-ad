@@ -69,7 +69,7 @@
                 maxlength="200"
                 required
               />
-              <span class="popup__error" id="user-description-error">Aboba</span>
+              <span class="popup__error" id="user-description-error"></span>
             </label>
             <button
               type="submit"
@@ -93,6 +93,10 @@
                 id="place-name"
                 class="popup__input popup__input_type_card-name"
                 placeholder="Название"
+                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+                minlength="2"
+                maxlength="40"
+                pattern="^[a-z A-Z а-я А-Я \- \s]+$"
               />
               <span class="popup__error" id="place-name-error"></span>
             </label>
@@ -102,6 +106,7 @@
                 id="place-link"
                 class="popup__input popup__input_type_url"
                 placeholder="Ссылка на картинку"
+                type="url"
               />
               <span class="popup__error" id="place-link-error"></span>
             </label>
@@ -150,6 +155,7 @@
                 id="user-avatar"
                 class="popup__input popup__input_type_avatar"
                 placeholder="Ссылка на изображение"
+                type="url"
               />
               <span class="popup__error" id="user-avatar-error"></span>
             </label>
