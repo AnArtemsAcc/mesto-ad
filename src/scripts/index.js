@@ -10,6 +10,7 @@ import { initialCards } from "./cards.js";
 import { createCardElement, deleteCard, likeCard } from "./components/card.js";
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from "./components/modal.js";
 import { enableValidation, clearValidation } from "./components/validation.js";
+import { getUserInfo } from "./components/api.js"
 
 // DOM узлы
 const placesWrap = document.querySelector(".places__list");
