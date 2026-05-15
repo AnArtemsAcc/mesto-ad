@@ -5,3 +5,9 @@
 Live-server является расширением VSCode
 
 Check workflow
+
+https://anartemsacc.github.io/mesto-production/
+
+```
+npm run dev
+```
