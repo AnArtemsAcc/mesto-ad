@@ -24,6 +24,31 @@ export const getCardList = () => {
   }).then(getResponseData);  // Проверяем успешность выполнения запроса
 };
 
+export const addCard = (name, link) => {
+  return fetch(`${config.baseUrl}/cards`, {
+    method: 'POST',
+    headers: config.headers,
+    body: JSON.stringify({
+      name,
+      link
+    })
+  }).then(getResponseData);
+};
+
+export const removeCard = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers,
+  }).then(getResponseData);
+};
+
+export const changeLikeCardStatus = (cardID, isLiked) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardID}`, {
+    method: isLiked ? "DELETE" : "PUT",
+    headers: config.headers,
+  }).then(getResponseData);
+};
+
 window.getUserInfo = getUserInfo
 
 window.getCardList = getCardList
