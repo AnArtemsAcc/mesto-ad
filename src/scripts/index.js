@@ -51,11 +51,12 @@ const handleDeleteCardClick = (cardElement, cardId) => {
   openModalWindow(removeCardModalWindow);
 };
 
-const handleLikeCard = (likeButton, cardId) => {
+const handleLikeCard = (likeButton, cardId, likeCountElement) => {
   const isLiked = likeButton.classList.contains("card__like-button_is-active");
   changeLikeCardStatus(cardId, isLiked)
     .then((cardData) => {
       likeCard(likeButton);
+      likeCountElement.textContent = cardData.likes.length;
     })
     .catch((err) => {
       console.log(err);
