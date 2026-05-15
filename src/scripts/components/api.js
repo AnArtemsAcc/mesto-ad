@@ -49,6 +49,27 @@ export const changeLikeCardStatus = (cardID, isLiked) => {
   }).then(getResponseData);
 };
 
+export const updateProfile = (name, about) => {
+  return fetch(`${config.baseUrl}/users/me`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      name,
+      about
+    })
+  }).then(getResponseData);
+};
+
+export const updateAvatar = (avatar) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar
+    })
+  }).then(getResponseData);
+};
+
 window.getUserInfo = getUserInfo
 
 window.getCardList = getCardList

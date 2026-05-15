@@ -9,7 +9,7 @@
 import { createCardElement, deleteCard, likeCard } from "./components/card.js";
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from "./components/modal.js";
 import { enableValidation, clearValidation } from "./components/validation.js";
-import { getUserInfo, addCard, removeCard, changeLikeCardStatus } from "./components/api.js"
+import { getUserInfo, addCard, removeCard, changeLikeCardStatus, updateProfile, updateAvatar } from "./components/api.js"
 
 // DOM узлы
 const placesWrap = document.querySelector(".places__list");
@@ -40,6 +40,14 @@ const avatarInput = avatarForm.querySelector(".popup__input");
 
 const removeCardModalWindow = document.querySelector(".popup_type_remove-card");
 const removeCardForm = removeCardModalWindow.querySelector(".popup__form");
+
+const renderLoading = (isLoading, button, buttonText = 'Сохранить', loadingText = 'Сохранение...') => {
+  if (isLoading) {
+    button.textContent = loadingText;
+  } else {
+    button.textContent = buttonText;
+  }
+};
 
 let userId;
 let cardToDelete = null;
@@ -72,20 +80,46 @@ const handlePreviewPicture = ({ name, link }) => {
 
 const handleProfileFormSubmit = (evt) => {
   evt.preventDefault();
-  profileTitle.textContent = profileTitleInput.value;
-  profileDescription.textContent = profileDescriptionInput.value;
-  closeModalWindow(profileFormModalWindow);
+  const submitButton = evt.submitter;
+  const initialText = submitButton.textContent;
+  renderLoading(true, submitButton, initialText, 'Сохранение...');
+
+  updateProfile(profileTitleInput.value, profileDescriptionInput.value)
+    .then((userData) => {
+      profileTitle.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      closeModalWindow(profileFormModalWindow);
+    })
+    .catch((err) => console.log(err))
+    .finally(() => {
+      renderLoading(false, submitButton, initialText);
+    });
 };
 
 const handleAvatarFromSubmit = (evt) => {
   evt.preventDefault();
-  profileAvatar.style.backgroundImage = `url(${avatarInput.value})`;
-  closeModalWindow(avatarFormModalWindow);
+  const submitButton = evt.submitter;
+  const initialText = submitButton.textContent;
+  renderLoading(true, submitButton, initialText, 'Сохранение...');
+
+  updateAvatar(avatarInput.value)
+    .then((userData) => {
+      profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
+      closeModalWindow(avatarFormModalWindow);
+    })
+    .catch((err) => console.log(err))
+    .finally(() => {
+      renderLoading(false, submitButton, initialText);
+    });
 };
 
 const handleCardFormSubmit = (evt) => {
   evt.preventDefault();
   
+  const submitButton = evt.submitter;
+  const initialText = submitButton.textContent;
+  renderLoading(true, submitButton, initialText, 'Создание...');
+
   const name = cardNameInput.value;
   const link = cardLinkInput.value;
 
@@ -106,6 +140,9 @@ const handleCardFormSubmit = (evt) => {
     })
     .catch((err) => {
       console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, submitButton, initialText);
     });
 };
 
@@ -115,6 +152,10 @@ cardForm.addEventListener("submit", handleCardFormSubmit);
 avatarForm.addEventListener("submit", handleAvatarFromSubmit);
 removeCardForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
+  const submitButton = evt.submitter;
+  const initialText = submitButton.textContent;
+  renderLoading(true, submitButton, initialText, 'Удаление...');
+
   removeCard(cardIdToDelete)
     .then(() => {
       deleteCard(cardToDelete);
@@ -124,6 +165,9 @@ removeCardForm.addEventListener("submit", (evt) => {
     })
     .catch((err) => {
       console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, submitButton, initialText);
     });
 });
 
@@ -169,7 +213,7 @@ Promise.all([getCardList(), getUserInfo()])
   .then(([cards, userData]) => {
     userId = userData._id;
     profileTitle.textContent = userData.name
-    profileAvatar.style.backgroundImage = userData.avatar
+    profileAvatar.style.backgroundImage = `url('${userData.avatar}')`
     profileDescription.textContent = userData.about
     cards.forEach((data) => {
       placesWrap.append(
