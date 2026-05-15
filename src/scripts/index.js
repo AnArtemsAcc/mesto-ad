@@ -9,7 +9,7 @@
 import { createCardElement, deleteCard, likeCard } from "./components/card.js";
 import { openModalWindow, closeModalWindow, setCloseModalWindowEventListeners } from "./components/modal.js";
 import { enableValidation, clearValidation } from "./components/validation.js";
-import { getUserInfo, addCard, removeCard, changeLikeCardStatus, updateProfile, updateAvatar } from "./components/api.js"
+import { getUserInfo, getCardList, addCard, removeCard, changeLikeCardStatus, updateProfile, updateAvatar } from "./components/api.js"
 
 // DOM узлы
 const placesWrap = document.querySelector(".places__list");
@@ -41,6 +41,13 @@ const avatarInput = avatarForm.querySelector(".popup__input");
 const removeCardModalWindow = document.querySelector(".popup_type_remove-card");
 const removeCardForm = removeCardModalWindow.querySelector(".popup__form");
 
+const usersStatsModalWindow = document.querySelector(".popup_type_info");
+const usersStatsModalTitle = usersStatsModalWindow.querySelector(".popup__title");
+const usersStatsModalInfoList = usersStatsModalWindow.querySelector(".popup__info");
+const usersStatsModalText = usersStatsModalWindow.querySelector(".popup__text");
+const usersStatsModalUserList = usersStatsModalWindow.querySelector(".popup__list");
+const logoButton = document.querySelector(".header__logo");
+
 const renderLoading = (isLoading, button, buttonText = 'Сохранить', loadingText = 'Сохранение...') => {
   if (isLoading) {
     button.textContent = loadingText;
@@ -65,6 +72,87 @@ const handleLikeCard = (likeButton, cardId, likeCountElement) => {
     .then((cardData) => {
       likeCard(likeButton);
       likeCountElement.textContent = cardData.likes.length;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const formatDate = (date) =>
+  date.toLocaleDateString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+const createInfoString = (term, description) => {
+  const template = document.getElementById("popup-info-definition-template");
+  const element = template.content.querySelector(".popup__info-item").cloneNode(true);
+  element.querySelector(".popup__info-term").textContent = term;
+  element.querySelector(".popup__info-description").textContent = description;
+  return element;
+};
+
+const createUserBadge = (name) => {
+  const template = document.getElementById("popup-info-user-preview-template");
+  const element = template.content.querySelector(".popup__list-item").cloneNode(true);
+  element.textContent = name;
+  return element;
+};
+
+const handleLogoClick = () => {
+  getCardList()
+    .then((cards) => {
+      // Очищаем предыдущее содержимое
+      usersStatsModalInfoList.innerHTML = "";
+      usersStatsModalUserList.innerHTML = "";
+
+      // Заголовок
+      usersStatsModalTitle.textContent = "Статистика пользователей";
+
+      // Всего карточек
+      usersStatsModalInfoList.append(
+        createInfoString("Всего карточек:", cards.length)
+      );
+
+      // Первая и последняя созданы
+      usersStatsModalInfoList.append(
+        createInfoString("Первая создана:", formatDate(new Date(cards[cards.length - 1].createdAt)))
+      );
+      usersStatsModalInfoList.append(
+        createInfoString("Последняя создана:", formatDate(new Date(cards[0].createdAt)))
+      );
+
+      // Собираем статистику по пользователям
+      const usersMap = {};
+      cards.forEach((card) => {
+        const ownerName = card.owner.name;
+        if (!usersMap[ownerName]) {
+          usersMap[ownerName] = 0;
+        }
+        usersMap[ownerName]++;
+      });
+
+      const userNames = Object.keys(usersMap);
+      const maxCards = Math.max(...Object.values(usersMap));
+
+      // Всего пользователей
+      usersStatsModalInfoList.append(
+        createInfoString("Всего пользователей:", userNames.length)
+      );
+
+      // Максимум карточек от одного
+      usersStatsModalInfoList.append(
+        createInfoString("Максимум карточек от одного:", maxCards)
+      );
+
+      // Все пользователи
+      usersStatsModalText.textContent = "Все пользователи:";
+      userNames.forEach((name) => {
+        usersStatsModalUserList.append(createUserBadge(name));
+      });
+
+      openModalWindow(usersStatsModalWindow);
     })
     .catch((err) => {
       console.log(err);
@@ -190,6 +278,7 @@ openCardFormButton.addEventListener("click", () => {
   openModalWindow(cardFormModalWindow);
 });
 
+logoButton.addEventListener("click", handleLogoClick);
 
 //настраиваем обработчики закрытия попапов
 const allPopups = document.querySelectorAll(".popup");
