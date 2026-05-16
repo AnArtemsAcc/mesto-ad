@@ -1,5 +1,6 @@
-export const likeCard = (likeButton) => {
+export const likeCard = (likeButton, likeCountElement, likesCount) => {
   likeButton.classList.toggle("card__like-button_is-active");
+  likeCountElement.textContent = likesCount;
 };
 
 export const deleteCard = (cardElement) => {

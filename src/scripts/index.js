@@ -49,11 +49,7 @@ const usersStatsModalUserList = usersStatsModalWindow.querySelector(".popup__lis
 const logoButton = document.querySelector(".header__logo");
 
 const renderLoading = (isLoading, button, buttonText = 'Сохранить', loadingText = 'Сохранение...') => {
-  if (isLoading) {
-    button.textContent = loadingText;
-  } else {
-    button.textContent = buttonText;
-  }
+  button.textContent = isLoading ? loadingText : buttonText;
 };
 
 let userId;
@@ -70,8 +66,7 @@ const handleLikeCard = (likeButton, cardId, likeCountElement) => {
   const isLiked = likeButton.classList.contains("card__like-button_is-active");
   changeLikeCardStatus(cardId, isLiked)
     .then((cardData) => {
-      likeCard(likeButton);
-      likeCountElement.textContent = cardData.likes.length;
+      likeCard(likeButton, likeCountElement, cardData.likes.length);
     })
     .catch((err) => {
       console.log(err);
@@ -203,7 +198,7 @@ const handleAvatarFromSubmit = (evt) => {
 
 const handleCardFormSubmit = (evt) => {
   evt.preventDefault();
-  
+
   const submitButton = evt.submitter;
   const initialText = submitButton.textContent;
   renderLoading(true, submitButton, initialText, 'Создание...');
